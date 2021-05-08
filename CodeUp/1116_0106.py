@@ -1,0 +1,5 @@
+a, b = map(int, input().split())
+print("%s+%s=%s" % (a, b, a+b))
+print("%s-%s=%s" % (a, b, a-b))
+print("%s*%s=%s" % (a, b, a*b))
+print("%s/%s=%s" % (a, b, a//b))

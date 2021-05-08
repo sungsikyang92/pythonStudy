@@ -1,0 +1,5 @@
+chem = input()
+slice = chem.index("H")
+a = int(chem[1:slice])
+b = int(chem[slice+1:])
+print((a*12)+(b*1))
