@@ -1,96 +1,111 @@
-#단일 링크드 리스트
+class Node:
+    def __init__(self, data, next = None):
+        self.data = data
+        self.next = next
+
 class SLinkedList:
-
-    #S_L_list에서 쓸 노드
-    class Node:
-        def __init__(self, v, n = None):
-            self.value = v #저장된 데이터
-            self.next = n #다음 노드 가리키는 변수
-
-    #S_L_List에서 필요한 변수
     def __init__(self):
-        self.head = None #첫 생성시 내부에는 노드가 없으므로
+        self.head = None
+        self.size = 0
+        # 첫 생성시 내부에는 노드가 없으므로 None이다.
 
+    def listSize(self):
+        return self.size
+
+    def is_empty(self):
+        if self.size != 0:
+            return False
+        else:
+            return True
+    # 노드 현 상황 출력
     def printNode(self):
-        #데이터가 없을 때
-        if self.head is None:
-            print("저장된 데이터가 없음")
+        if self.head is None: # 데이터가 없을 때
+            print("No Data")
             return
         else:
-            print("<현재 리스트 구조>", end='\t') #end로 print 마지막 개행을 변경할 수 있습니다.
-            link = self.head #처음은 head를 지정. 이후부터는 현 노드의 next를 지정
+            print("<현재 리스트 구조>", end='\t')
+            link = self.head    #처음에는 head를 지정해 줘야 한다. 이후는 next를 지정한다.
 
-            #link가 가리키는 노드가 없을 때까지 반복
-            #None,0,""는 조건판단에서 False 처리, 그 외는 True로 처리된다.
-            while link :
-                print(link.value, '->' , end = ' ')
-                link = link.next #link를 현 위치 노드의 next로 변경
-            print() #줄바꿈 용
+            # link가 가리키는 노드가 없을 때까지 반복 해야 하기에 while문을 사용해준다.
+            while link:
+                print(link.data, '->', end = ' ')
+                link = link.next # link를 현 위치 노드의 next로 변경
+            print()
+    # 노드 추가
+    def append(self, data):
+        if self.is_empty():
+            self.head = Node(data)
+            self.size += 1
+        else:
+            target = self.head
+            while target.next != None:
+                target = target.next
+            newtail = Node(data)
+            target.next = newtail
+            self.size += 1
 
     # 삽입
-    def insertNode(self, v):  # 추가할 데이터
-        # 만일 처음 노드일 경우 -> head값이 None임
-        if self.head is None:
-            # head에 새 노드를 저장
-            self.head = self.Node(v)
-        else:  # 이미 노드가 있는 경우
-            # head에 새 노드를 저장
-            # 기존 head에 저장된 노드는 새로 생성할 노드의 next로 저장
-            self.head = self.Node(v, self.head)
+    def insertNode(self, data, idx):
+        if self.head is None:    #맨 첫 노드를 저장
+            self.head = Node(data)
+            self.size += 1
+        elif idx == 0:
+            self.head = Node(data, self.head)
+            self.size += 1
+        else:
+            target = self.selectNode(idx-1)
+            if target == None:
+                return
+            newNode = Node(data)
+            tmp = target.next
+            target.next = newNode
+            newNode.next = tmp
+            self.size += 1
 
     # 삭제
-    def deleteNode(self):
-        # 노드가 없으면 skip
+    def deleteNode(self, idx):
         if self.head is None:
-            print("삭제할 노드가 없습니다.")
+            print("underflow")
             return
+        elif idx >= self.size:
+            print("overflow")
+            return
+        elif idx == 0:    # idx == 0을 삭제할 경우 맨 앞의 head를 삭제 하는 것이다.
+            target = self.head
+            self.head = target.next
+            del(target)
+            self.size -= 1
         else:
-            # head를 현 head의 next. 즉, 다음 노드로 변경.
-            self.head = self.head.next
+            target = self.selectNode(idx-1)
+            deltarget = target.next
+            target.next = target.next.next
+            del(deltarget)
+            self.size -= 1
 
-    #조회
-    def searchNode(self,v):
-        # 데이터가 없을 때
+    # 조회
+    def searchNode(self, data):
         if self.head is None:
-            print("저장된 데이터가 없음")
+            print('underflow')
             return
         else:
-            link = self.head  # 처음은 head를 지정. 이후부터는 현 노드의 next를 지정
-            index  = 0 #몇 번째 노드인지 기록
+            link = self.head
+            index = 0 # 몇 번째 노드인지 기록하기 위한 index이다.
             while link:
-                #내가 찾는 노드인지 확인
-                if v == link.value:
-                    return index #위치를 반환
+                if data == link.data:
+                    return index
                 else:
-                    link = link.next  # link를 현 위치 노드의 next로 변경
-                    index += 1 #위치값 1 증가
-            #여기까지 왔다 == 해당 v값을 가진 노드가 없다.
-            #print("일치되는 값이 없습니다.")
+                    link = link.next
+                    index += 1
 
-##테스트
-if __name__=="__main__":
-    sl = SLinkedList()
-    sl.printNode()  # 출력
-    sl.insertNode('1st')
-    sl.printNode()  # 출력
-    sl.insertNode('2nd')
-    sl.printNode()  # 출력
-    sl.insertNode('3rd')
-    sl.printNode()  # 출력
-
-
-    #탐색
-    print("<위치 탐색>")
-    result = sl.searchNode('1st')
-    print("1st의 위치 : {}".format(result))
-
-    result = sl.searchNode('555')
-    print("555의 위치 : {}".format(result))
-    print("삭제")
-    sl.printNode()  # 출력
-    sl.deleteNode()
-    # sl.deleteNode()
-    sl.printNode()  # 출력
-    sl.deleteNode()
-    # sl.deleteNode()
-    sl.printNode()  # 출력
+    # 노드선택
+    def selectNode(self, idx):
+        if idx >= self.size:
+            print('overflow')
+            return None
+        elif idx == 0:
+            return self.head
+        else:
+            target = self.head
+            for cnt in range(idx):
+                target = target.next
+            return target
